@@ -1,0 +1,12 @@
+target
+.git
+.gitignore
+.idea
+*.md
+*.log
+.DS_Store
+.classpath
+.project
+.settings
+replay_pid*.log
+hs_err_pid*.log
