@@ -1,5 +1,6 @@
 package com.project.ponto.domain.model;
 
+import com.project.ponto.domain.enums.DiaSemanaEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
