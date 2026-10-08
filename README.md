@@ -17,7 +17,7 @@ essa api serve para resolver problemas simples na hora de registrar dados sobre 
 
 `Docker compose up` (primeira vez subindo os container na maquina)
 
-`Docker compose -f docker-compose.yml up build -d`
+`Docker compose -f docker-compose.yml up build -d` (conforme atualizações vão surgindo)
 
 
 ## modelo conceitual
