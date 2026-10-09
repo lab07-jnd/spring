@@ -18,15 +18,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@DisplayName("Testes de Persistência JPA do Value Object Email")
+@DisplayName("Email Value Object JPA Persistence Tests")
 class EmailPersistenceTest {
 
     @Autowired
     private TestEntityManager em;
 
     @Entity
-    @Table(name = "pessoa_teste_email")
-    static class PessoaTesteEmail {
+    @Table(name = "person_test_email")
+    static class PersonTestEmail {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -34,9 +34,9 @@ class EmailPersistenceTest {
         @Embedded
         private Email email;
 
-        protected PessoaTesteEmail() {}
+        protected PersonTestEmail() {}
 
-        public PessoaTesteEmail(Email email) {
+        public PersonTestEmail(Email email) {
             this.email = email;
         }
 
@@ -50,68 +50,68 @@ class EmailPersistenceTest {
     }
 
     @Nested
-    @DisplayName("6. Persistência JPA")
-    class PersistenciaJpa {
+    @DisplayName("6. JPA Persistence")
+    class JpaPersistence {
 
         @Test
-        @DisplayName("Deve realizar round-trip de Email válido pelo banco de dados")
-        void deveRealizarRoundTripComSucesso() {
-            Email emailOriginal = new Email("user@dominio.com");
-            PessoaTesteEmail pessoa = new PessoaTesteEmail(emailOriginal);
+        @DisplayName("Must perform round-trip of a valid Email through the database")
+        void mustPerformRoundTripSuccessfully() {
+            Email originalEmail = new Email("user@domain.com");
+            PersonTestEmail person = new PersonTestEmail(originalEmail);
 
-            PessoaTesteEmail salva = em.persistAndFlush(pessoa);
+            PersonTestEmail saved = em.persistAndFlush(person);
             em.clear();
 
-            PessoaTesteEmail recarregada = em.find(PessoaTesteEmail.class, salva.getId());
+            PersonTestEmail reloaded = em.find(PersonTestEmail.class, saved.getId());
 
-            assertThat(recarregada).isNotNull();
-            assertThat(recarregada.getEmail().raw()).isEqualTo("user@dominio.com");
-            assertThat(recarregada.getEmail()).isEqualTo(emailOriginal);
-            assertThat(recarregada.getEmail().formatted()).isEqualTo("user@dominio.com");
+            assertThat(reloaded).isNotNull();
+            assertThat(reloaded.getEmail().raw()).isEqualTo("user@domain.com");
+            assertThat(reloaded.getEmail()).isEqualTo(originalEmail);
+            assertThat(reloaded.getEmail().formatted()).isEqualTo("user@domain.com");
         }
 
         @Test
-        @DisplayName("Deve persistir a forma canônica normalizada (lowercase e stripped)")
-        void devePersistirValorNormalizado() {
-            Email emailComMascara = new Email(" Usuario@Dominio.COM ");
-            PessoaTesteEmail pessoa = new PessoaTesteEmail(emailComMascara);
+        @DisplayName("Must persist the normalized canonical form (lowercase and stripped)")
+        void mustPersistNormalizedValue() {
+            Email maskedEmail = new Email(" User@Domain.COM ");
+            PersonTestEmail person = new PersonTestEmail(maskedEmail);
 
-            PessoaTesteEmail salva = em.persistAndFlush(pessoa);
+            PersonTestEmail saved = em.persistAndFlush(person);
             em.clear();
 
-            Object valorNoBanco = em.getEntityManager()
-                    .createNativeQuery("SELECT email FROM pessoa_teste_email WHERE id = :id")
-                    .setParameter("id", salva.getId())
+            Object valueInDatabase = em.getEntityManager()
+                    .createNativeQuery("SELECT email FROM person_test_email WHERE id = :id")
+                    .setParameter("id", saved.getId())
                     .getSingleResult();
 
-            assertThat(valorNoBanco).isEqualTo("usuario@dominio.com");
+            assertThat(valueInDatabase).isEqualTo("user@domain.com");
         }
 
         @Test
-        @DisplayName("Deve falhar ao carregar entidade se o valor armazenado no banco for inválido")
-        void deveFalharAoCarregarDadoInvalidoDoBanco() {
+        @DisplayName("Must fail to load entity if the value stored in the database is invalid")
+        void mustFailToLoadInvalidDataFromDatabase() {
             em.getEntityManager()
-                    .createNativeQuery("INSERT INTO pessoa_teste_email (id, email) VALUES (999, 'invalido-sem-arroba.com')")
+                    .createNativeQuery("INSERT INTO person_test_email (id, email) VALUES (999, 'invalid-no-at-sign.com')")
                     .executeUpdate();
             em.clear();
 
-            assertThatThrownBy(() -> em.find(PessoaTesteEmail.class, 999L))
+            assertThatThrownBy(() -> em.find(PersonTestEmail.class, 999L))
                     .isInstanceOf(Exception.class);
         }
 
         @Test
-        @DisplayName("Deve garantir igualdade por equals após o round-trip")
-        void deveManterIgualdadeAposRoundTrip() {
-            Email emailOriginal = new Email("USER@DOMINIO.COM");
-            PessoaTesteEmail pessoa = new PessoaTesteEmail(emailOriginal);
+        @DisplayName("Must guarantee equality by equals after round-trip")
+        void mustMaintainEqualityAfterRoundTrip() {
+            Email originalEmail = new Email("USER@DOMAIN.COM");
+            PersonTestEmail person = new PersonTestEmail(originalEmail);
 
-            PessoaTesteEmail salva = em.persistAndFlush(pessoa);
+            PersonTestEmail saved = em.persistAndFlush(person);
             em.clear();
 
-            PessoaTesteEmail recarregada = em.find(PessoaTesteEmail.class, salva.getId());
-            Email emailEsperado = new Email("user@dominio.com");
+            PersonTestEmail reloaded = em.find(PersonTestEmail.class, saved.getId());
+            Email expectedEmail = new Email("user@domain.com");
 
-            assertThat(recarregada.getEmail()).isEqualTo(emailEsperado);
+            assertThat(reloaded.getEmail()).isEqualTo(expectedEmail);
         }
     }
 }

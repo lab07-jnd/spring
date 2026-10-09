@@ -7,71 +7,71 @@ import jakarta.persistence.Embeddable;
 public record CPF(
 
         @Column(name = "cpf", nullable = false, length = 11)
-        String valor
+        String value
 
 ) {
 
-    private static final int QUANTIDADE_DIGITOS = 11;
+    private static final int DIGIT_COUNT = 11;
 
-    /** Construtor compacto: normaliza e valida antes de atribuir. */
+    /** Compact constructor: normalizes and validates before assignment. */
     public CPF {
-        if (valor == null) {
-            throw new IllegalArgumentException("CPF não pode ser nulo");
+        if (value == null) {
+            throw new IllegalArgumentException("CPF cannot be null");
         }
 
-        String digits = valor.replaceAll("\\D", "");
+        String digits = value.replaceAll("\\D", "");
 
-        if (digits.length() != QUANTIDADE_DIGITOS) {
+        if (digits.length() != DIGIT_COUNT) {
             throw new IllegalArgumentException(
-                    "CPF deve conter 11 dígitos: %s. Formato: XXX.XXX.XXX-XX".formatted(valor)
+                    "CPF must contain 11 digits: %s. Format: XXX.XXX.XXX-XX".formatted(value)
             );
         }
 
-        if (!validarDigitosVerificadores(digits)) {
-            throw new IllegalArgumentException("CPF com dígitos verificadores inválidos");
+        if (!validateCheckDigits(digits)) {
+            throw new IllegalArgumentException("CPF with invalid check digits");
         }
 
-        valor = digits;
+        value = digits;
     }
 
-    private static boolean validarDigitosVerificadores(String cpf) {
-        // Rejeita sequências repetidas: 000..., 111..., etc.
+    private static boolean validateCheckDigits(String cpf) {
+        // Rejects repeated sequences: 000..., 111..., etc.
         if (cpf.chars().distinct().count() == 1) {
             return false;
         }
 
-        int primeiro = calcularDigito(cpf, 9, 10);
-        int segundo  = calcularDigito(cpf, 10, 11);
+        int first = calculateDigit(cpf, 9, 10);
+        int second = calculateDigit(cpf, 10, 11);
 
-        return (cpf.charAt(9)  - '0') == primeiro
-                && (cpf.charAt(10) - '0') == segundo;
+        return (cpf.charAt(9)  - '0') == first
+                && (cpf.charAt(10) - '0') == second;
     }
 
-    private static int calcularDigito(String cpf, int limite, int pesoInicial) {
-        int soma = 0;
-        for (int i = 0; i < limite; i++) {
-            soma += (cpf.charAt(i) - '0') * (pesoInicial - i);
+    private static int calculateDigit(String cpf, int limit, int initialWeight) {
+        int sum = 0;
+        for (int i = 0; i < limit; i++) {
+            sum += (cpf.charAt(i) - '0') * (initialWeight - i);
         }
-        int resto = soma % 11;
-        return resto < 2 ? 0 : 11 - resto;
+        int remainder = sum % 11;
+        return remainder < 2 ? 0 : 11 - remainder;
     }
 
-    /** CPF sem formatação (somente dígitos). */
+    /** CPF without formatting (digits only). */
     public String raw() {
-        return valor;
+        return value;
     }
 
-    /** CPF formatado: XXX.XXX.XXX-XX */
+    /** Formatted CPF: XXX.XXX.XXX-XX */
     public String formatted() {
         return "%s.%s.%s-%s".formatted(
-                valor.substring(0, 3),
-                valor.substring(3, 6),
-                valor.substring(6, 9),
-                valor.substring(9)
+                value.substring(0, 3),
+                value.substring(3, 6),
+                value.substring(6, 9),
+                value.substring(9)
         );
     }
 
-    /** Valida sem lançar exceção. */
+    /** Validates without throwing an exception. */
     public static boolean isValid(String cpf) {
         try {
             new CPF(cpf);

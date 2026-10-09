@@ -13,24 +13,24 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BancoHoras {
+public class HourBank {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int saldoMinutos;
+    private int balanceMinutes;
 
-    private int saldoMinutosAnterior;
+    private int previousBalanceMinutes;
 
-    private LocalDate periodoInicio;
+    private LocalDate periodStart;
 
-    private LocalDate periodoFim;
+    private LocalDate periodEnd;
 
-    private LocalDate dataExpiracao;
+    private LocalDate expirationDate;
 
-    private LocalDateTime ultimaAtualizacao;
+    private LocalDateTime lastUpdatedAt;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "bancoHoras")
-    private List<MovimentoBancoHoras> movimentos;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hourBank")
+    private List<HourBankMovement> movements;
 }

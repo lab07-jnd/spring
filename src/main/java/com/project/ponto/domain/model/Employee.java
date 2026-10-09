@@ -1,6 +1,6 @@
 package com.project.ponto.domain.model;
 
-import com.project.ponto.domain.enums.StatusFuncionarioEnum;
+import com.project.ponto.domain.enums.EmployeeStatusEnum;
 import com.project.ponto.domain.vo.CPF;
 import com.project.ponto.domain.vo.Email;
 import jakarta.persistence.*;
@@ -14,15 +14,15 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Funcionario {
+public class Employee {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String matricula;
+    private String registrationNumber;
 
-    private String nome;
+    private String name;
 
     @Embedded
     private CPF cpf;
@@ -30,12 +30,12 @@ public class Funcionario {
     @Embedded
     private Email email;
 
-    private String cargo;
+    private String role;
 
-    private String departamento;
+    private String department;
 
     @Enumerated(EnumType.STRING)
-    private StatusFuncionarioEnum status;
+    private EmployeeStatusEnum status;
 
     private LocalDateTime createdAt;
 

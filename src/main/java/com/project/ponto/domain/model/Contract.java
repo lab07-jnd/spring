@@ -1,7 +1,7 @@
 package com.project.ponto.domain.model;
 
-import com.project.ponto.domain.enums.StatusContratoEnum;
-import com.project.ponto.domain.enums.TipoContratoEnum;
+import com.project.ponto.domain.enums.ContractStatusEnum;
+import com.project.ponto.domain.enums.ContractTypeEnum;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,42 +15,42 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Contrato {
+public class Contract {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate dataAdmissao;
+    private LocalDate admissionDate;
 
-    private LocalDate dataDemissao;
-
-    @Enumerated(EnumType.STRING)
-    private TipoContratoEnum tipo;
-
-    private int salarioBaseCentavos;
+    private LocalDate terminationDate;
 
     @Enumerated(EnumType.STRING)
-    private StatusContratoEnum status;
+    private ContractTypeEnum type;
+
+    private int baseSalaryCents;
+
+    @Enumerated(EnumType.STRING)
+    private ContractStatusEnum status;
 
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
     @ManyToOne
-    @JoinColumn(name = "funcionario_id")
-    private Funcionario funcionario;
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "jornada_id")
-    private Jornada jornada;
+    @JoinColumn(name = "work_schedule_id")
+    private WorkSchedule workSchedule;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "banco_horas_id")
-    private BancoHoras bancoHoras;
+    @JoinColumn(name = "hour_bank_id")
+    private HourBank hourBank;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "contrato")
-    private List<RegistroPonto> registrosPonto;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "contract")
+    private List<TimeRecord> timeRecords;
 
     @PrePersist
     protected void onCreate() {

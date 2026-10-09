@@ -1,7 +1,7 @@
 package com.project.ponto.domain.enums;
 
-public enum OrigemPontoEnum {
+public enum TimeRecordOriginEnum {
     WEB,
-    APLICATIVO,
+    APP,
     MANUAL
 }

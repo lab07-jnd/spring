@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public record Email(
 
         @Column(name = "email", nullable = false, length = 254)
-        String valor
+        String value
 
 ) {
 
@@ -16,102 +16,102 @@ public record Email(
             """
             ^(?<local>[A-Za-z0-9._%+\\-]+)\
             @\
-            (?<dominio>(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]*[A-Za-z0-9])?\\.)+[A-Za-z]{2,})$
+            (?<domain>(?:[A-Za-z0-9](?:[A-Za-z0-9\\-]*[A-Za-z0-9])?\\.)+[A-Za-z]{2,})$
             """,
             Pattern.COMMENTS
     );
 
-    private static final int TAMANHO_TOTAL_MAX = 254;
-    private static final int TAMANHO_LOCAL_MAX = 64;
+    private static final int MAX_TOTAL_LENGTH = 254;
+    private static final int MAX_LOCAL_LENGTH = 64;
 
     public Email {
-        if (valor == null) {
-            throw new IllegalArgumentException("E-mail não pode ser nulo");
+        if (value == null) {
+            throw new IllegalArgumentException("Email cannot be null");
         }
 
-        String normalizado = valor.strip().toLowerCase();
+        String normalized = value.strip().toLowerCase();
 
-        validarFormato(normalizado);
-        validarTamanhoTotal(normalizado);
+        validateFormat(normalized);
+        validateTotalLength(normalized);
 
-        String local = extrairLocal(normalizado);
-        validarTamanhoLocal(local);
-        validarPontosLocal(local);
+        String local = extractLocal(normalized);
+        validateLocalLength(local);
+        validateLocalDots(local);
 
-        valor = normalizado;
+        value = normalized;
     }
 
-    // ----- auxiliares de parsing -----
+    // ----- parsing helpers -----
 
-    private static String extrairLocal(String email) {
+    private static String extractLocal(String email) {
         return email.substring(0, email.indexOf('@'));
     }
 
-    private static String extrairDominio(String email) {
+    private static String extractDomain(String email) {
         return email.substring(email.indexOf('@') + 1);
     }
 
-    // ----- validações privadas -----
+    // ----- private validations -----
 
-    private static void validarFormato(String email) {
+    private static void validateFormat(String email) {
         if (email.isEmpty()) {
-            throw new IllegalArgumentException("E-mail não pode ser vazio");
+            throw new IllegalArgumentException("Email cannot be empty");
         }
         if (!EMAIL_REGEX.matcher(email).matches()) {
             throw new IllegalArgumentException(
-                    "E-mail inválido: %s. Formato esperado: usuario@dominio.com".formatted(email)
+                    "Invalid email: %s. Expected format: user@domain.com".formatted(email)
             );
         }
     }
 
-    private static void validarTamanhoTotal(String email) {
-        if (email.length() > TAMANHO_TOTAL_MAX) {
+    private static void validateTotalLength(String email) {
+        if (email.length() > MAX_TOTAL_LENGTH) {
             throw new IllegalArgumentException(
-                    "E-mail excede o limite de 254 caracteres, recebido " + email.length()
+                    "Email exceeds the limit of 254 characters, received " + email.length()
             );
         }
     }
 
-    private static void validarTamanhoLocal(String local) {
-        if (local.length() > TAMANHO_LOCAL_MAX) {
+    private static void validateLocalLength(String local) {
+        if (local.length() > MAX_LOCAL_LENGTH) {
             throw new IllegalArgumentException(
-                    "Parte local do e-mail excede o limite de 64 caracteres, recebido "
+                    "Local part of the email exceeds the limit of 64 characters, received "
                             + local.length()
             );
         }
     }
 
-    private static void validarPontosLocal(String local) {
+    private static void validateLocalDots(String local) {
         if (local.contains("..") || local.startsWith(".") || local.endsWith(".")) {
             throw new IllegalArgumentException(
-                    "Parte local do e-mail não pode conter pontos consecutivos, "
-                            + "nem iniciar/terminar com ponto: " + local
+                    "Local part of the email cannot contain consecutive dots, "
+                            + "nor start/end with a dot: " + local
             );
         }
     }
 
-    /** E-mail normalizado (lower case, sem espaços). */
+    /** Normalized email (lower case, no spaces). */
     public String raw() {
-        return valor;
+        return value;
     }
 
-    /** Forma canônica de exibição — mesmo valor normalizado. */
+    /** Canonical display form — same normalized value. */
     public String formatted() {
-        return valor;
+        return value;
     }
 
     public String localPart() {
-        return extrairLocal(valor);
+        return extractLocal(value);
     }
 
     public String domain() {
-        return extrairDominio(valor);
+        return extractDomain(value);
     }
 
-    /** Valida sem lançar exceção. */
-    public static boolean isValid(String enderecoEmail) {
+    /** Validates without throwing an exception. */
+    public static boolean isValid(String emailAddress) {
         try {
-            new Email(enderecoEmail);
+            new Email(emailAddress);
             return true;
         } catch (RuntimeException e) {
             return false;
@@ -120,6 +120,6 @@ public record Email(
 
     @Override
     public String toString() {
-        return valor;
+        return value;
     }
 }

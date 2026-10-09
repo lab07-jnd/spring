@@ -18,15 +18,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
-@DisplayName("Testes de Persistência JPA do Value Object CPF")
+@DisplayName("CPF Value Object JPA Persistence Tests")
 class CPFPersistenceTest {
 
     @Autowired
     private TestEntityManager em;
 
     @Entity
-    @Table(name = "pessoa_teste_cpf")
-    static class PessoaTesteCPF {
+    @Table(name = "person_test_cpf")
+    static class PersonTestCPF {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
@@ -34,9 +34,9 @@ class CPFPersistenceTest {
         @Embedded
         private CPF cpf;
 
-        protected PessoaTesteCPF() {}
+        protected PersonTestCPF() {}
 
-        public PessoaTesteCPF(CPF cpf) {
+        public PersonTestCPF(CPF cpf) {
             this.cpf = cpf;
         }
 
@@ -50,68 +50,68 @@ class CPFPersistenceTest {
     }
 
     @Nested
-    @DisplayName("6. Persistência JPA")
-    class PersistenciaJpa {
+    @DisplayName("6. JPA Persistence")
+    class JpaPersistence {
 
         @Test
-        @DisplayName("Deve realizar round-trip de CPF válido pelo banco de dados")
-        void deveRealizarRoundTripComSucesso() {
-            CPF cpfOriginal = new CPF("529.982.247-25");
-            PessoaTesteCPF pessoa = new PessoaTesteCPF(cpfOriginal);
+        @DisplayName("Must perform round-trip of a valid CPF through the database")
+        void mustPerformRoundTripSuccessfully() {
+            CPF originalCpf = new CPF("529.982.247-25");
+            PersonTestCPF person = new PersonTestCPF(originalCpf);
 
-            PessoaTesteCPF salva = em.persistAndFlush(pessoa);
+            PersonTestCPF saved = em.persistAndFlush(person);
             em.clear();
 
-            PessoaTesteCPF recarregada = em.find(PessoaTesteCPF.class, salva.getId());
+            PersonTestCPF reloaded = em.find(PersonTestCPF.class, saved.getId());
 
-            assertThat(recarregada).isNotNull();
-            assertThat(recarregada.getCpf().raw()).isEqualTo("52998224725");
-            assertThat(recarregada.getCpf()).isEqualTo(cpfOriginal);
-            assertThat(recarregada.getCpf().formatted()).isEqualTo("529.982.247-25");
+            assertThat(reloaded).isNotNull();
+            assertThat(reloaded.getCpf().raw()).isEqualTo("52998224725");
+            assertThat(reloaded.getCpf()).isEqualTo(originalCpf);
+            assertThat(reloaded.getCpf().formatted()).isEqualTo("529.982.247-25");
         }
 
         @Test
-        @DisplayName("Deve persistir o valor normalizado mesmo quando construído com entrada formatada")
-        void devePersistirValorNormalizado() {
-            CPF cpfComMascara = new CPF(" 529.982.247-25 ");
-            PessoaTesteCPF pessoa = new PessoaTesteCPF(cpfComMascara);
+        @DisplayName("Must persist the normalized value even when constructed with formatted input")
+        void mustPersistNormalizedValue() {
+            CPF maskedCpf = new CPF(" 529.982.247-25 ");
+            PersonTestCPF person = new PersonTestCPF(maskedCpf);
 
-            PessoaTesteCPF salva = em.persistAndFlush(pessoa);
+            PersonTestCPF saved = em.persistAndFlush(person);
             em.clear();
 
-            Object valorNoBanco = em.getEntityManager()
-                    .createNativeQuery("SELECT cpf FROM pessoa_teste_cpf WHERE id = :id")
-                    .setParameter("id", salva.getId())
+            Object valueInDatabase = em.getEntityManager()
+                    .createNativeQuery("SELECT cpf FROM person_test_cpf WHERE id = :id")
+                    .setParameter("id", saved.getId())
                     .getSingleResult();
 
-            assertThat(valorNoBanco).isEqualTo("52998224725");
+            assertThat(valueInDatabase).isEqualTo("52998224725");
         }
 
         @Test
-        @DisplayName("Deve falhar ao carregar entidade se o valor armazenado no banco for inválido")
-        void deveFalharAoCarregarDadoInvalidoDoBanco() {
+        @DisplayName("Must fail to load entity if the value stored in the database is invalid")
+        void mustFailToLoadInvalidDataFromDatabase() {
             em.getEntityManager()
-                    .createNativeQuery("INSERT INTO pessoa_teste_cpf (id, cpf) VALUES (999, '00000000000')")
+                    .createNativeQuery("INSERT INTO person_test_cpf (id, cpf) VALUES (999, '00000000000')")
                     .executeUpdate();
             em.clear();
 
-            assertThatThrownBy(() -> em.find(PessoaTesteCPF.class, 999L))
+            assertThatThrownBy(() -> em.find(PersonTestCPF.class, 999L))
                     .isInstanceOf(Exception.class);
         }
 
         @Test
-        @DisplayName("Deve garantir igualdade por equals após o round-trip")
-        void deveManterIgualdadeAposRoundTrip() {
-            CPF cpfOriginal = new CPF("52998224725");
-            PessoaTesteCPF pessoa = new PessoaTesteCPF(cpfOriginal);
+        @DisplayName("Must guarantee equality by equals after round-trip")
+        void mustMaintainEqualityAfterRoundTrip() {
+            CPF originalCpf = new CPF("52998224725");
+            PersonTestCPF person = new PersonTestCPF(originalCpf);
 
-            PessoaTesteCPF salva = em.persistAndFlush(pessoa);
+            PersonTestCPF saved = em.persistAndFlush(person);
             em.clear();
 
-            PessoaTesteCPF recarregada = em.find(PessoaTesteCPF.class, salva.getId());
-            CPF cpfEsperado = new CPF("529.982.247-25");
+            PersonTestCPF reloaded = em.find(PersonTestCPF.class, saved.getId());
+            CPF expectedCpf = new CPF("529.982.247-25");
 
-            assertThat(recarregada.getCpf()).isEqualTo(cpfEsperado);
+            assertThat(reloaded.getCpf()).isEqualTo(expectedCpf);
         }
     }
 }

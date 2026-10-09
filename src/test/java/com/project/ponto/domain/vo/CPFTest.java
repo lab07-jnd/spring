@@ -10,12 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DisplayName("Testes de Unidade do Value Object CPF")
+@DisplayName("CPF Value Object Unit Tests")
 class CPFTest {
 
     @Nested
-    @DisplayName("1. Construção Válida e Normalização")
-    class ConstrucaoValida {
+    @DisplayName("1. Valid Construction and Normalization")
+    class ValidConstruction {
 
         @ParameterizedTest
         @CsvSource({
@@ -25,126 +25,126 @@ class CPFTest {
                 "'529 982 247 25', '52998224725'",
                 "'529.982.247/25', '52998224725'"
         })
-        @DisplayName("Deve aceitar e normalizar entradas válidas de CPF")
-        void deveNormalizarEntradasValidasQuandoFormatoCorreto(String entrada, String rawEsperado) {
-            CPF cpf = new CPF(entrada);
+        @DisplayName("Must accept and normalize valid CPF inputs")
+        void mustNormalizeValidInputsWhenFormatIsCorrect(String input, String expectedRaw) {
+            CPF cpf = new CPF(input);
 
-            assertThat(cpf.raw()).isEqualTo(rawEsperado);
+            assertThat(cpf.raw()).isEqualTo(expectedRaw);
             assertThat(cpf.formatted()).isEqualTo("529.982.247-25");
             assertThat(cpf.toString()).isEqualTo(cpf.formatted());
         }
 
         @Test
-        @DisplayName("Deve produzir o mesmo raw para entradas equivalentes com e sem máscara")
-        void deveProduzirMesmoRawQuandoComESemMascara() {
-            CPF cpfComMascara = new CPF("529.982.247-25");
-            CPF cpfSemMascara = new CPF("52998224725");
+        @DisplayName("Must produce the same raw for equivalent inputs with and without mask")
+        void mustProduceSameRawWithAndWithoutMask() {
+            CPF maskedCpf = new CPF("529.982.247-25");
+            CPF unmaskedCpf = new CPF("52998224725");
 
-            assertThat(cpfComMascara.raw()).isEqualTo(cpfSemMascara.raw());
+            assertThat(maskedCpf.raw()).isEqualTo(unmaskedCpf.raw());
         }
     }
 
     @Nested
-    @DisplayName("2. Rejeição de Entradas Inválidas")
-    class RejeicaoInvalida {
+    @DisplayName("2. Rejection of Invalid Inputs")
+    class InvalidRejection {
 
         @Test
-        @DisplayName("Deve rejeitar CPF nulo")
-        void deveRejeitarQuandoNulo() {
+        @DisplayName("Must reject null CPF")
+        void mustRejectWhenNull() {
             assertThatThrownBy(() -> new CPF(null))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF vazio")
-        void deveRejeitarQuandoVazio() {
+        @DisplayName("Must reject empty CPF")
+        void mustRejectWhenEmpty() {
             assertThatThrownBy(() -> new CPF(""))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com menos de 11 dígitos")
-        void deveRejeitarQuandoMenosDe11Digitos() {
+        @DisplayName("Must reject CPF with fewer than 11 digits")
+        void mustRejectWhenFewerThan11Digits() {
             assertThatThrownBy(() -> new CPF("123"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com mais de 11 dígitos")
-        void deveRejeitarQuandoMaisDe11Digitos() {
+        @DisplayName("Must reject CPF with more than 11 digits")
+        void mustRejectWhenMoreThan11Digits() {
             assertThatThrownBy(() -> new CPF("123456789012"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com somente letras")
-        void deveRejeitarQuandoSomenteLetras() {
+        @DisplayName("Must reject CPF with letters only")
+        void mustRejectWhenLettersOnly() {
             assertThatThrownBy(() -> new CPF("abcdefghijk"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com dígitos repetidos")
-        void deveRejeitarQuandoDigitosRepetidos() {
+        @DisplayName("Must reject CPF with repeated digits")
+        void mustRejectWhenRepeatedDigits() {
             assertThatThrownBy(() -> new CPF("111.111.111-11"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com primeiro dígito verificador incorreto")
-        void deveRejeitarQuandoPrimeiroDvErrado() {
+        @DisplayName("Must reject CPF with incorrect first check digit")
+        void mustRejectWhenFirstCheckDigitWrong() {
             assertThatThrownBy(() -> new CPF("529.982.247-35"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com segundo dígito verificador incorreto")
-        void deveRejeitarQuandoSegundoDvErrado() {
+        @DisplayName("Must reject CPF with incorrect second check digit")
+        void mustRejectWhenSecondCheckDigitWrong() {
             assertThatThrownBy(() -> new CPF("529.982.247-26"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar CPF com ambos os dígitos verificadores incorretos")
-        void deveRejeitarQuandoAmbosDvsErrados() {
+        @DisplayName("Must reject CPF with both check digits incorrect")
+        void mustRejectWhenBothCheckDigitsWrong() {
             assertThatThrownBy(() -> new CPF("529.982.247-00"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Nested
-    @DisplayName("3. Validação de Limites de Tamanho")
-    class Limites {
+    @DisplayName("3. Length Limit Validation")
+    class Limits {
 
         @Test
-        @DisplayName("Deve aceitar entrada com exatamente 11 dígitos")
-        void deveAceitarQuandoExatamente11Digitos() {
+        @DisplayName("Must accept input with exactly 11 digits")
+        void mustAcceptWhenExactly11Digits() {
             CPF cpf = new CPF("52998224725");
             assertThat(cpf.raw()).hasSize(11);
         }
 
         @Test
-        @DisplayName("Deve rejeitar entrada com 10 dígitos")
-        void deveRejeitarQuando10Digitos() {
+        @DisplayName("Must reject input with 10 digits")
+        void mustRejectWhen10Digits() {
             assertThatThrownBy(() -> new CPF("5299822472"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
-        @DisplayName("Deve rejeitar entrada com 12 dígitos")
-        void deveRejeitarQuando12Digitos() {
+        @DisplayName("Must reject input with 12 digits")
+        void mustRejectWhen12Digits() {
             assertThatThrownBy(() -> new CPF("529982247250"))
                     .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
     @Nested
-    @DisplayName("4. Contrato de Value Object (Equals, HashCode e ToString)")
-    class ContratoValueObject {
+    @DisplayName("4. Value Object Contract (Equals, HashCode and ToString)")
+    class ValueObjectContract {
 
         @Test
-        @DisplayName("Deve ser igual por valor para instâncias construídas de entradas equivalentes")
-        void deveSerIgualPorValorQuandoEntradasEquivalentes() {
+        @DisplayName("Must be equal by value for instances built from equivalent inputs")
+        void mustBeEqualByValueWhenEquivalentInputs() {
             CPF cpf1 = new CPF("529.982.247-25");
             CPF cpf2 = new CPF("52998224725");
 
@@ -152,8 +152,8 @@ class CPFTest {
         }
 
         @Test
-        @DisplayName("Deve possuir mesmo hashCode para instâncias iguais")
-        void devePossuirMesmoHashCodeQuandoInstanciasIguais() {
+        @DisplayName("Must have same hashCode for equal instances")
+        void mustHaveSameHashCodeWhenInstancesEqual() {
             CPF cpf1 = new CPF("529.982.247-25");
             CPF cpf2 = new CPF("52998224725");
 
@@ -161,8 +161,8 @@ class CPFTest {
         }
 
         @Test
-        @DisplayName("Deve ser diferente quando os CPFs possuem valores distintos")
-        void deveSerDiferenteQuandoValoresDistintos() {
+        @DisplayName("Must be different when CPFs have distinct values")
+        void mustBeDifferentWhenDistinctValues() {
             CPF cpf1 = new CPF("529.982.247-25");
             CPF cpf2 = new CPF("111.444.777-35");
 
@@ -170,24 +170,24 @@ class CPFTest {
         }
 
         @Test
-        @DisplayName("Deve retornar false ao comparar com null")
-        void deveRetornarFalseQuandoComparadoComNull() {
+        @DisplayName("Must return false when compared with null")
+        void mustReturnFalseWhenComparedWithNull() {
             CPF cpf = new CPF("529.982.247-25");
 
             assertThat(cpf.equals(null)).isFalse();
         }
 
         @Test
-        @DisplayName("Deve retornar false ao comparar com tipo diferente")
-        void deveRetornarFalseQuandoComparadoComTipoDiferente() {
+        @DisplayName("Must return false when compared with a different type")
+        void mustReturnFalseWhenComparedWithDifferentType() {
             CPF cpf = new CPF("529.982.247-25");
 
             assertThat(cpf.equals("52998224725")).isFalse();
         }
 
         @Test
-        @DisplayName("toString deve ser estável e consistente com formatted()")
-        void deveTerToStringConsistenteComFormatted() {
+        @DisplayName("toString must be stable and consistent with formatted()")
+        void mustHaveToStringConsistentWithFormatted() {
             CPF cpf = new CPF("529.982.247-25");
 
             assertThat(cpf.toString()).isEqualTo("529.982.247-25");
@@ -196,12 +196,12 @@ class CPFTest {
     }
 
     @Nested
-    @DisplayName("5. Validação via API isValid")
-    class ApiIsValid {
+    @DisplayName("5. Validation via isValid API")
+    class IsValidApi {
 
         @Test
-        @DisplayName("isValid deve retornar true para entrada válida")
-        void deveRetornarTrueQuandoCpfValido() {
+        @DisplayName("isValid must return true for valid input")
+        void mustReturnTrueWhenCpfValid() {
             assertThat(CPF.isValid("529.982.247-25")).isTrue();
         }
 
@@ -217,14 +217,14 @@ class CPFTest {
                 "529.982.247-26",
                 "529.982.247-00"
         })
-        @DisplayName("isValid deve retornar false para entradas inválidas sem lançar exceção")
-        void deveRetornarFalseQuandoCpfInvalido(String entradaInvalida) {
-            assertThat(CPF.isValid(entradaInvalida)).isFalse();
+        @DisplayName("isValid must return false for invalid inputs without throwing")
+        void mustReturnFalseWhenCpfInvalid(String invalidInput) {
+            assertThat(CPF.isValid(invalidInput)).isFalse();
         }
 
         @Test
-        @DisplayName("isValid(null) deve retornar false sem lançar NullPointerException")
-        void deveRetornarFalseQuandoNullSemLancarExcecao() {
+        @DisplayName("isValid(null) must return false without throwing NullPointerException")
+        void mustReturnFalseWhenNullWithoutThrowingException() {
             assertThat(CPF.isValid(null)).isFalse();
         }
     }
