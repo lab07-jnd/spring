@@ -1,38 +1,35 @@
 # Lab 07
-O lab 07 se trata de um projeto em grupo para o controle de ponto de uma empresa contendo uma API REST e uma aplicação web (Front e back). Construida em java Spring boot via back end.  prioriza codigo limpo e implementação de padrões de projetos MVC sendo model e control pela API e view pelo front end
+Lab 07 is a group project for tracking employee working hours at a company, consisting of a REST API and a web application (front end and back end). The back end is built with Java and Spring Boot. The project prioritizes clean code and the MVC design pattern, with the model and controller in the API and the view in the front end.
 
-## Problemas a serem soluciondos
+## Problems it solves
 
-essa api serve para resolver problemas simples na hora de registrar dados sobre funcionários como
+This API solves simple problems when recording employee data, such as:
 
-- horário de entrada do funcionário
-- horário de saida do funcionário
-- banco de horas (ou horas extras)
-- declaração de horas (caso precise entrar mais tarde ou sair mais cedo)
-- atestados (ausências)
+- employee clock-in time
+- employee clock-out time
+- hour bank (or overtime)
+- time declarations (when someone needs to arrive later or leave earlier)
+- medical certificates (absences)
 
-## Rodar o projeto
-
-- como o projeto está sido dockerizado só é necessário rodar os comandos
-
-`Docker compose up` (primeira vez subindo os container na maquina)
-
-`Docker compose -f docker-compose.yml up build -d` (conforme atualizações vão surgindo)
-
-## modelo conceitual
-Diagrama de classe
+## Conceptual model
+Class diagram
 
 ## Run database
 
-**Everything in Docker:**
+**Everything in Docker** (API at http://localhost:8090):
 
-`docker compose up -d --build`   # API at http://localhost:8090
+```bash
+docker compose up -d --build
+```
 
-**Database in Docker, API from the IDE:**
+**Database in Docker, API from the IDE** (always start the database first):
 
-`docker compose up -d postgres  # always start the database first`
-`.\mvnw.cmd spring-boot:run     # ./mvnw on Linux/macOS`
+```bash
+docker compose up -d postgres
+.\mvnw.cmd spring-boot:run
+```
 
+On Linux/macOS, use `./mvnw spring-boot:run`.
 
 **Tests** (H2 in memory, no Docker needed): `.\mvnw.cmd test`
 
@@ -54,19 +51,16 @@ Schema changes live in `src/main/resources/db/migration/` and run on startup. Hi
 
 Java 21 · Spring Boot 4.1.1 · Spring Data JPA · Flyway · PostgreSQL 16 · H2 · Lombok · Docker
 
-## Stacks utilizadas
+## Technologies used
 
 - Java 21
-- Spring boot
-- Spring data JPA
-- Spring boot starter web
-- Spring book dev tools
-- docker
-- postgresSQL
+- Spring Boot
+- Spring Data JPA
+- Spring Boot Starter Web
+- Spring Boot DevTools
+- Docker
+- PostgreSQL
 
 ## Endpoints
-| Método | Endpoint           | Descrição                                                       |
+| Method | Endpoint           | Description                                                     |
 |--------|--------------------|------------------------------------------------------------------|
-
-
-
