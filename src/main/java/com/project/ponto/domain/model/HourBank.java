@@ -33,4 +33,10 @@ public class HourBank {
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "hourBank")
     private List<HourBankMovement> movements;
+
+    @PrePersist
+    @PreUpdate
+    protected void touch() {
+        lastUpdatedAt = LocalDateTime.now();
+    }
 }
