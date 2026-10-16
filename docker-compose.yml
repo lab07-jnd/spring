@@ -1,14 +1,14 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: lab07-db
+    container_name: ${KEY_POSTGRES_CONTAINER_NAME:-app-db}
     environment:
-      POSTGRES_DB: ponto
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: root
+      POSTGRES_DB: ${KEY_POSTGRES_DB:-app}
+      POSTGRES_USER: ${KEY_POSTGRES_USER:-db}
+      POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD:-pass}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - "5432:5432"
+      - ${KEY_POSTGRES_CONTAINER_PORTS:-"5432:5432"}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -23,13 +23,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: lab07-app
+    container_name: ${KEY_SPRING_CONTAINER_NAME:-app-app}
     ports:
-      - "8090:8090"
+      - ${KEY_SPRING_CONTAINER_PORTS:-"8090:8090"}
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ponto
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATASOURCE_URL: ${KEY_SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/app}
+      SPRING_DATASOURCE_USERNAME: ${KEY_SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${KEY_SPRING_DATASOURCE_PASSWORD}
     depends_on:
       postgres:
         condition: service_healthy
