@@ -121,6 +121,17 @@ class TimeRecordRepositoryTest {
     }
 
     @Test
+    @DisplayName("Must return records of an inactive employee")
+    void mustReturnRecordsOfInactiveEmployee() {
+        employee.setStatus(EmployeeStatusEnum.INACTIVE);
+        TimeRecord record = persistRecord(contract, LocalDateTime.of(2026, 10, 10, 8, 0));
+
+        List<TimeRecordResponse> result = findInOctober(employee);
+
+        assertThat(result).extracting(TimeRecordResponse::id).containsExactly(record.getId());
+    }
+
+    @Test
     @DisplayName("Must not return records of another employee")
     void mustNotReturnRecordsOfAnotherEmployee() {
         Employee other = persistEmployee("002", "11144477735", "bruno@empresa.com");
