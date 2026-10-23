@@ -7,6 +7,6 @@ import java.util.List;
 
 @Repository
 public interface HourBankRepository extends JpaRepository<HourBank, Long> {
-
+    List<HourBank> findByEmployeeId(Long employeeId);
     
 }

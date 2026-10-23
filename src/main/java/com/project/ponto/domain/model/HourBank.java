@@ -39,4 +39,10 @@ public class HourBank {
     protected void touch() {
         lastUpdatedAt = LocalDateTime.now();
     }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", nullable = false)
+    private Employee employee;
+
+
 }
