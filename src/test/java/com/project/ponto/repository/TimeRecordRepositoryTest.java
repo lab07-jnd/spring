@@ -30,6 +30,7 @@ import com.project.ponto.domain.model.Justification;
 import com.project.ponto.domain.model.TimeRecord;
 import com.project.ponto.domain.vo.CPF;
 import com.project.ponto.domain.vo.Email;
+import com.project.ponto.domain.vo.Geolocation;
 import com.project.ponto.dto.TimeRecordResponse;
 
 @DataJpaTest
@@ -74,6 +75,7 @@ class TimeRecordRepositoryTest {
         record.setType(TimeRecordTypeEnum.LUNCH_OUT);
         record.setOrigin(TimeRecordOriginEnum.APP);
         record.setNotes("Saída para almoço");
+        record.setGeolocation(new Geolocation(-23.55, -46.63));
         em.persist(record);
         // @PrePersist sets createdAt to now(); a fixed value makes the expectation a literal
         record.setCreatedAt(LocalDateTime.of(2026, 10, 10, 12, 0, 5));
@@ -89,8 +91,8 @@ class TimeRecordRepositoryTest {
                 LocalDateTime.of(2026, 10, 10, 12, 0),
                 TimeRecordTypeEnum.LUNCH_OUT,
                 TimeRecordOriginEnum.APP,
-                null,
-                null,
+                -23.55,
+                -46.63,
                 "Saída para almoço",
                 LocalDateTime.of(2026, 10, 10, 12, 0, 5),
                 justification.getId()));

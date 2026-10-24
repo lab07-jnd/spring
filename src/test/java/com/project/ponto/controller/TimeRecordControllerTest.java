@@ -43,8 +43,8 @@ class TimeRecordControllerTest {
         // Stubbed only for these exact arguments: a wrong conversion gets the mock's empty list
         when(service.listByEmployee(7L, LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31), 1, 10))
                 .thenReturn(List.of(new TimeRecordResponse(
-                        15L, null, null, 3L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN,
-                        TimeRecordOriginEnum.WEB, null, null, "Entrada", LocalDateTime.of(2026, 10, 10, 8, 0, 5), 4L)));
+                        15L, 7L, "Ana Souza", 3L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN,
+                        TimeRecordOriginEnum.WEB, -23.55, -46.63, "Entrada", LocalDateTime.of(2026, 10, 10, 8, 0, 5), 4L)));
 
         mockMvc.perform(get("/funcionarios/7/pontos")
                         .param("dataInicio", "2026-10-01")
@@ -55,12 +55,16 @@ class TimeRecordControllerTest {
                 .andExpect(content().json("""
                         [{
                           "id": 15,
+                          "employeeId": 7,
+                          "employeeName": "Ana Souza",
+                          "contractId": 3,
                           "dateTime": "2026-10-10T08:00:00",
                           "type": "CLOCK_IN",
                           "origin": "WEB",
+                          "latitude": -23.55,
+                          "longitude": -46.63,
                           "notes": "Entrada",
                           "createdAt": "2026-10-10T08:00:05",
-                          "contractId": 3,
                           "justificationId": 4
                         }]
                         """, JsonCompareMode.STRICT));
