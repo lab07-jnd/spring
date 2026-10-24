@@ -1,14 +1,14 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: ${KEY_POSTGRES_CONTAINER_NAME:-app-db}
+    container_name: ${KEY_POSTGRES_CONTAINER_NAME:-lab07-postgres}
     environment:
-      POSTGRES_DB: ${KEY_POSTGRES_DB:-app}
-      POSTGRES_USER: ${KEY_POSTGRES_USER:-db}
-      POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD:-pass}
+      POSTGRES_DB: ${KEY_POSTGRES_DB:-appdb}
+      POSTGRES_USER: ${KEY_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${KEY_POSTGRES_PASSWORD:-postgres}
       PGDATA: /var/lib/postgresql/data/pgdata
     ports:
-      - ${KEY_POSTGRES_CONTAINER_PORTS:-"5432:5432"}
+      - ${KEY_POSTGRES_CONTAINER_PORTS:-5432:5432}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -23,13 +23,15 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: ${KEY_SPRING_CONTAINER_NAME:-app-app}
+    container_name: ${KEY_SPRING_CONTAINER_NAME:-lab07-app}
     ports:
-      - ${KEY_SPRING_CONTAINER_PORTS:-"8090:8090"}
+      - ${KEY_SPRING_CONTAINER_PORTS:-8080:8080}
     environment:
-      SPRING_DATASOURCE_URL: ${KEY_SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/app}
-      SPRING_DATASOURCE_USERNAME: ${KEY_SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${KEY_SPRING_DATASOURCE_PASSWORD}
+      SPRING_DATASOURCE_URL: ${KEY_SPRING_DATASOURCE_URL:-jdbc:postgresql://postgres:5432/appdb}
+      SPRING_DATASOURCE_USERNAME: ${KEY_SPRING_DATASOURCE_USERNAME:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${KEY_SPRING_DATASOURCE_PASSWORD:-postgres}
+      KEY_SPRING_APPLICATION_NAME: ${KEY_SPRING_APPLICATION_NAME:-lab07-app}
+      KEY_SERVER_PORT: ${KEY_SERVER_PORT:-8080}
     depends_on:
       postgres:
         condition: service_healthy
