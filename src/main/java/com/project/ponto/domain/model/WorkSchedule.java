@@ -29,6 +29,9 @@ public class WorkSchedule {
 
     private int breakMinutes;
 
+    // Minutos que a entrada pode passar do startTime sem virar atraso
+    private int lateToleranceMinutes = 5;
+
     @ElementCollection(targetClass = DayOfWeekEnum.class, fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "work_schedule_worked_days", joinColumns = @JoinColumn(name = "work_schedule_id"))
