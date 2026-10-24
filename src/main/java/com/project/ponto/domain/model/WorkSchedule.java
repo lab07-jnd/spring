@@ -6,6 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -39,4 +42,21 @@ public class WorkSchedule {
     private List<DayOfWeekEnum> workedDays;
 
     private boolean active;
+
+    // Minutos de atraso de uma entrada (CLOCK_IN): 0 com a jornada inativa, em dia não trabalhado ou dentro
+    // da tolerância; passou dela, conta o atraso inteiro, não só o excedente.
+    // Só minutos completos contam (08:10:59 = 10 min). Jornada que atravessa a meia-noite fica fora do escopo:
+    // o horário esperado é o startTime no mesmo dia da entrada
+    public int lateMinutesAt(LocalDateTime clockIn) {
+        if (!active || !isWorkedDay(clockIn.getDayOfWeek())) {
+            return 0;
+        }
+        long lateMinutes = Duration.between(clockIn.toLocalDate().atTime(startTime), clockIn).toMinutes();
+        return lateMinutes > lateToleranceMinutes ? (int) lateMinutes : 0;
+    }
+
+    // DayOfWeekEnum usa os mesmos nomes de java.time.DayOfWeek
+    private boolean isWorkedDay(DayOfWeek day) {
+        return workedDays.contains(DayOfWeekEnum.valueOf(day.name()));
+    }
 }
