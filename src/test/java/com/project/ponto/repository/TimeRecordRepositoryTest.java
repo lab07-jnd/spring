@@ -83,12 +83,16 @@ class TimeRecordRepositoryTest {
 
         assertThat(result).containsExactly(new TimeRecordResponse(
                 record.getId(),
+                employee.getId(),
+                employee.getName(),
+                contract.getId(),
                 LocalDateTime.of(2026, 10, 10, 12, 0),
                 TimeRecordTypeEnum.LUNCH_OUT,
                 TimeRecordOriginEnum.APP,
+                null,
+                null,
                 "Saída para almoço",
                 LocalDateTime.of(2026, 10, 10, 12, 0, 5),
-                contract.getId(),
                 justification.getId()));
     }
 
