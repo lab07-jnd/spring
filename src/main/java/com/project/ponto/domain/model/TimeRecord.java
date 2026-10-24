@@ -2,6 +2,7 @@ package com.project.ponto.domain.model;
 
 import com.project.ponto.domain.enums.TimeRecordOriginEnum;
 import com.project.ponto.domain.enums.TimeRecordTypeEnum;
+import com.project.ponto.domain.vo.Geolocation;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,9 @@ public class TimeRecord {
     private TimeRecordOriginEnum origin;
 
     private String notes;
+
+    @Embedded
+    private Geolocation geolocation;
 
     private LocalDateTime createdAt;
 

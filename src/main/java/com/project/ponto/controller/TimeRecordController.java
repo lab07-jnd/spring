@@ -4,15 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.project.ponto.dto.TimeRecordRequest;
 import com.project.ponto.dto.TimeRecordResponse;
 import com.project.ponto.service.TimeRecordService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,6 +25,13 @@ import lombok.RequiredArgsConstructor;
 public class TimeRecordController {
 
     private final TimeRecordService service;
+
+    // POST /pontos -> 201 (ou 400 / 404 / 409)
+    @PostMapping("/pontos")
+    public ResponseEntity<TimeRecordResponse> register(@Valid @RequestBody TimeRecordRequest request) {
+        TimeRecordResponse response = service.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     // GET /funcionarios/{funcionarioId}/pontos?dataInicio=yyyy-MM-dd&dataFim=yyyy-MM-dd&page=1&size=10
     // -> 200 (ou 400 / 404). Sem datas, mês corrente; sem page, todos os pontos
@@ -34,5 +46,4 @@ public class TimeRecordController {
             @RequestParam(required = false) Integer size) {
         return ResponseEntity.ok(service.listByEmployee(employeeId, startDate, endDate, page, size));
     }
-//TODO: get period by employee (filter by data)
 }
