@@ -21,6 +21,24 @@ import com.project.ponto.service.HourBankService;
 
 @RequestMapping("/hourbank")
 public class HourBankController(){
+@AutoWired
+public HourBankService hourService;
+
+public HourBankRepository hourRepository;
+
+@GetMapping("/")
+public String testRoute(){
+return "it works";
+}
+
+@GetMapping("/listAll")
+
+
+@PutMapping("/update")
+Public HourBankModel atualizar(HourBankModel data){
+return repository.save(data)
+}
+
 
 
 }
