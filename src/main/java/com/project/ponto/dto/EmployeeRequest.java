@@ -10,4 +10,5 @@ public record EmployeeRequest(
         String role,
         String department,
         EmployeeStatusEnum status
+
 ) {}
