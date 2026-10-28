@@ -13,6 +13,7 @@ import com.project.ponto.dto.TimeRecordRequest;
 import com.project.ponto.repository.ContractRepository;
 import com.project.ponto.repository.EmployeeRepository;
 import com.project.ponto.repository.TimeRecordRepository;
+import com.project.ponto.util.JwtTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +40,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @DisplayName("TimeRecord API Contract Tests (POST /pontos) - Boundary Value Analysis")
 class TimeRecordContractTest {
+
+    /**
+     * A single valid JWT is generated once per class load and reused across all
+     * tests. The token carries no user-specific state that affects the business
+     * rules under test (the employee is identified by the request body, not by
+     * the JWT principal). It exercises the full security pipeline:
+     * BearerTokenAuthenticationFilter → JwtDecoder → JwtAuthenticationConverter.
+     */
+    private static final String VALID_TOKEN = JwtTestUtils.validToken("test-user");
 
     @Autowired
     private MockMvc mockMvc;
@@ -112,6 +123,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -141,6 +153,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -161,6 +174,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -181,6 +195,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -201,6 +216,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -221,6 +237,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -241,6 +258,7 @@ class TimeRecordContractTest {
                     ""
             );
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(requestEmpty)))
                     .andExpect(status().isCreated())
@@ -287,6 +305,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -314,6 +333,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -333,6 +353,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -352,6 +373,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -371,6 +393,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -391,6 +414,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -410,6 +434,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -429,6 +454,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -456,6 +482,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
@@ -475,6 +502,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
@@ -494,6 +522,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNotFound())
@@ -522,6 +551,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -551,6 +581,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
@@ -581,6 +612,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -600,6 +632,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
@@ -620,6 +653,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest());
@@ -641,6 +675,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
@@ -667,6 +702,7 @@ class TimeRecordContractTest {
             );
 
             mockMvc.perform(post("/pontos")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + VALID_TOKEN)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
