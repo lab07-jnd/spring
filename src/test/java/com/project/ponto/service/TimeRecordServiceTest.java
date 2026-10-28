@@ -33,6 +33,7 @@ import com.project.ponto.domain.enums.TimeRecordOriginEnum;
 import com.project.ponto.domain.enums.TimeRecordTypeEnum;
 import com.project.ponto.dto.TimeRecordResponse;
 import com.project.ponto.exception.ResourceNotFoundException;
+import com.project.ponto.repository.ContractRepository;
 import com.project.ponto.repository.EmployeeRepository;
 import com.project.ponto.repository.TimeRecordRepository;
 
@@ -51,6 +52,9 @@ class TimeRecordServiceTest {
 
     @Mock
     private EmployeeRepository employeeRepository;
+
+    @Mock
+    private ContractRepository contractRepository;
 
     private TimeRecordService service;
 
@@ -74,8 +78,8 @@ class TimeRecordServiceTest {
     void mustReturnRecordsFoundByRepository() {
         givenEmployeeExists();
         List<TimeRecordResponse> found = List.of(new TimeRecordResponse(
-                1L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN, TimeRecordOriginEnum.WEB,
-                null, LocalDateTime.of(2026, 10, 10, 8, 0, 1), 3L, null));
+                1L, null, null, 3L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN,
+                TimeRecordOriginEnum.WEB, null, null, null, LocalDateTime.of(2026, 10, 10, 8, 0, 1), null));
         when(timeRecordRepository.findByEmployeeAndPeriod(eq(EMPLOYEE_ID), any(), any(), any())).thenReturn(found);
 
         List<TimeRecordResponse> result = service.listByEmployee(
@@ -210,6 +214,7 @@ class TimeRecordServiceTest {
     }
 
     private TimeRecordService serviceAt(Instant now) {
-        return new TimeRecordService(timeRecordRepository, employeeRepository, Clock.fixed(now, SAO_PAULO));
+        return new TimeRecordService(timeRecordRepository, employeeRepository, contractRepository,
+                Clock.fixed(now, SAO_PAULO));
     }
 }

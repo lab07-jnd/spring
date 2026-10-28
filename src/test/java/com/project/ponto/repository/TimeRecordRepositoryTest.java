@@ -30,6 +30,7 @@ import com.project.ponto.domain.model.Justification;
 import com.project.ponto.domain.model.TimeRecord;
 import com.project.ponto.domain.vo.CPF;
 import com.project.ponto.domain.vo.Email;
+import com.project.ponto.domain.vo.Geolocation;
 import com.project.ponto.dto.TimeRecordResponse;
 
 @DataJpaTest
@@ -58,11 +59,12 @@ class TimeRecordRepositoryTest {
     @Test
     @DisplayName("Must project every field of the time record")
     // One id range per table: identity counters are not rolled back between tests, so the
-    // three ids could coincide and a swap of t.id, c.id and j.id in the select new would pass
+    // four ids could coincide and a swap of t.id, e.id, c.id and j.id in the select new would pass
     @Sql(statements = {
             "ALTER TABLE time_record ALTER COLUMN id RESTART WITH 1000",
             "ALTER TABLE contract ALTER COLUMN id RESTART WITH 2000",
-            "ALTER TABLE justification ALTER COLUMN id RESTART WITH 3000"},
+            "ALTER TABLE justification ALTER COLUMN id RESTART WITH 3000",
+            "ALTER TABLE employee ALTER COLUMN id RESTART WITH 4000"},
             config = @SqlConfig(transactionMode = SqlConfig.TransactionMode.ISOLATED))
     void mustProjectEveryField() {
         Justification justification = persistJustification(employee);
@@ -74,21 +76,27 @@ class TimeRecordRepositoryTest {
         record.setType(TimeRecordTypeEnum.LUNCH_OUT);
         record.setOrigin(TimeRecordOriginEnum.APP);
         record.setNotes("Saída para almoço");
+        record.setGeolocation(new Geolocation(-23.55, -46.63));
         em.persist(record);
         // @PrePersist sets createdAt to now(); a fixed value makes the expectation a literal
         record.setCreatedAt(LocalDateTime.of(2026, 10, 10, 12, 0, 5));
-        assertThat(List.of(record.getId(), contract.getId(), justification.getId())).doesNotHaveDuplicates();
+        assertThat(List.of(record.getId(), employee.getId(), contract.getId(), justification.getId()))
+                .doesNotHaveDuplicates();
 
         List<TimeRecordResponse> result = findInOctober(employee);
 
         assertThat(result).containsExactly(new TimeRecordResponse(
                 record.getId(),
+                employee.getId(),
+                employee.getName(),
+                contract.getId(),
                 LocalDateTime.of(2026, 10, 10, 12, 0),
                 TimeRecordTypeEnum.LUNCH_OUT,
                 TimeRecordOriginEnum.APP,
+                -23.55,
+                -46.63,
                 "Saída para almoço",
                 LocalDateTime.of(2026, 10, 10, 12, 0, 5),
-                contract.getId(),
                 justification.getId()));
     }
 
