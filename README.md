@@ -64,4 +64,4 @@ Java 21 · Spring Boot 4.1.1 · Spring Data JPA · Flyway · PostgreSQL 16 · H2
 ## Endpoints
 | Method | Endpoint           | Description                                                     |
 |--------|--------------------|------------------------------------------------------------------|
-| GET | `/funcionarios/{funcionarioId}/pontos?dataInicio=yyyy-MM-dd&dataFim=yyyy-MM-dd&page=1&size=10` | Employee time record history in a period, across all contracts. Without dates: current month (America/Sao_Paulo); without `page`: all records. 400 for invalid parameters, 404 for an unknown employee |
+| GET | `/funcionarios/{funcionarioId}/pontos?dataInicio=yyyy-MM-dd&dataFim=yyyy-MM-dd&page=1&size=10` | Employee time record history in a period, across all contracts. Without dates: current month (America/Sao_Paulo); without `page`: all records. Each record has `lateMinutes`: the whole delay of the first clock-in of the day once it passes the work schedule's tolerance, 0 otherwise. 400 for invalid parameters, 404 for an unknown employee |

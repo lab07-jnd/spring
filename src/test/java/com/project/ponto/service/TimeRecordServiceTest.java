@@ -78,7 +78,7 @@ class TimeRecordServiceTest {
     void mustReturnRecordsFoundByRepository() {
         givenEmployeeExists();
         List<TimeRecordResponse> found = List.of(new TimeRecordResponse(
-                1L, null, null, 3L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN,
+                1L, null, null, 3L, LocalDateTime.of(2026, 10, 10, 8, 0), TimeRecordTypeEnum.CLOCK_IN, 0,
                 TimeRecordOriginEnum.WEB, null, null, null, LocalDateTime.of(2026, 10, 10, 8, 0, 1), null));
         when(timeRecordRepository.findByEmployeeAndPeriod(eq(EMPLOYEE_ID), any(), any(), any())).thenReturn(found);
 

@@ -31,6 +31,7 @@ import com.project.ponto.domain.model.Employee;
 import com.project.ponto.domain.model.TimeRecord;
 import com.project.ponto.domain.model.WorkSchedule;
 import com.project.ponto.dto.TimeRecordRequest;
+import com.project.ponto.dto.TimeRecordResponse;
 import com.project.ponto.repository.ContractRepository;
 import com.project.ponto.repository.EmployeeRepository;
 import com.project.ponto.repository.TimeRecordRepository;
@@ -87,6 +88,14 @@ class TimeRecordServiceLatenessTest {
         serviceAt(MONDAY_08_12).register(clockIn());
 
         assertThat(savedRecord().getLateMinutes()).isEqualTo(12);
+    }
+
+    @Test
+    @DisplayName("Must return the late minutes in the response")
+    void mustReturnLateMinutesInResponse() {
+        TimeRecordResponse response = serviceAt(MONDAY_08_12).register(clockIn());
+
+        assertThat(response.lateMinutes()).isEqualTo(12);
     }
 
     @Test

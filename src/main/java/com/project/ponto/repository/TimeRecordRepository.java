@@ -32,7 +32,7 @@ public interface TimeRecordRepository extends JpaRepository<TimeRecord, Long> {
     // A ordem dos argumentos do "select new" segue o construtor canônico de TimeRecordResponse.
     @Query("""
             select new com.project.ponto.dto.TimeRecordResponse(
-                t.id, e.id, e.name, c.id, t.dateTime, t.type, t.origin,
+                t.id, e.id, e.name, c.id, t.dateTime, t.type, t.lateMinutes, t.origin,
                 t.geolocation.latitude, t.geolocation.longitude,
                 t.notes, t.createdAt, j.id)
             from TimeRecord t
