@@ -29,23 +29,23 @@ class SecurityConfigTest {
 
     @Test
     void mustAcceptValidTokenAndExposeUserId() throws Exception {
-        String token = signed(SECRET, "abc123", Instant.now().plusSeconds(3600));
+        String token = signed(SECRET, "123", Instant.now().plusSeconds(3600));
 
         Jwt jwt = decoder.decode(token);
 
-        assertEquals("abc123", jwt.getClaimAsString("id"));
+        assertEquals("123", jwt.getClaimAsString("id"));
     }
 
     @Test
     void mustRejectWhenTokenIsExpired() throws Exception {
-        String token = signed(SECRET, "abc123", Instant.now().minusSeconds(3600));
+        String token = signed(SECRET, "123", Instant.now().minusSeconds(3600));
 
         assertThrows(JwtException.class, () -> decoder.decode(token));
     }
 
     @Test
     void mustRejectWhenSignedWithDifferentSecret() throws Exception {
-        String token = signed(OTHER_SECRET, "abc123", Instant.now().plusSeconds(3600));
+        String token = signed(OTHER_SECRET, "123", Instant.now().plusSeconds(3600));
 
         assertThrows(JwtException.class, () -> decoder.decode(token));
     }
@@ -53,7 +53,7 @@ class SecurityConfigTest {
     @Test
     void mustRejectWhenTokenIsUnsignedWithAlgNone() {
         JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                .claim("id", "abc123")
+                .claim("id", "123")
                 .expirationTime(Date.from(Instant.now().plusSeconds(3600)))
                 .build();
         String token = new PlainJWT(claims).serialize();
@@ -64,6 +64,13 @@ class SecurityConfigTest {
     @Test
     void mustRejectWhenIdClaimIsMissing() throws Exception {
         String token = signed(SECRET, null, Instant.now().plusSeconds(3600));
+
+        assertThrows(JwtException.class, () -> decoder.decode(token));
+    }
+
+    @Test
+    void mustRejectWhenIdClaimIsNotNumeric() throws Exception {
+        String token = signed(SECRET, "abc123", Instant.now().plusSeconds(3600));
 
         assertThrows(JwtException.class, () -> decoder.decode(token));
     }
