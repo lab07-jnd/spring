@@ -26,6 +26,8 @@ public class Justification {
 
     private String reason;
 
+    private String rejectionReason;
+
     @Enumerated(EnumType.STRING)
     private JustificationTypeEnum type;
 
@@ -40,6 +42,7 @@ public class Justification {
 
     private LocalDateTime approvedAt;
 
+    @Column(length = 500)
     private String attachmentUrl;
 
     @ManyToOne

@@ -32,17 +32,30 @@ public final class JwtTestUtils {
      * Returns a signed JWT string valid for 1 hour, carrying the custom
      * {@code id} claim required by SecurityConfig#userIdValidator().
      *
-     * @param userId arbitrary user identifier to place in the "id" claim
+     * @param userId numeric user identifier to place in the "id" claim
      */
     public static String validToken(String userId) {
-        try {
-            JWTClaimsSet claims = new JWTClaimsSet.Builder()
-                    .claim("id", userId)
-                    .issueTime(new Date())
-                    .expirationTime(Date.from(Instant.now().plusSeconds(3600)))
-                    .build();
+        return tokenWithIdClaim(userId);
+    }
 
-            SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
+    /**
+     * Returns a signed JWT valid for 1 hour but without the {@code id} claim,
+     * which must be rejected by {@link com.project.ponto.config.SecurityConfig}.
+     */
+    public static String tokenWithoutId() {
+        return tokenWithIdClaim(null);
+    }
+
+    private static String tokenWithIdClaim(String userId) {
+        try {
+            JWTClaimsSet.Builder claims = new JWTClaimsSet.Builder()
+                    .issueTime(new Date())
+                    .expirationTime(Date.from(Instant.now().plusSeconds(3600)));
+            if (userId != null) {
+                claims.claim("id", userId);
+            }
+
+            SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims.build());
             jwt.sign(new MACSigner(TEST_SECRET.getBytes(StandardCharsets.UTF_8)));
             return jwt.serialize();
         } catch (Exception e) {

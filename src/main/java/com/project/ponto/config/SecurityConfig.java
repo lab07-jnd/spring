@@ -81,6 +81,12 @@ public class SecurityConfig {
                 return OAuth2TokenValidatorResult.failure(
                         new OAuth2Error("invalid_token", "Claim 'id' isn't on token", null));
             }
+            try {
+                Long.parseLong(id);
+            } catch (NumberFormatException ex) {
+                return OAuth2TokenValidatorResult.failure(
+                        new OAuth2Error("invalid_token", "Claim 'id' must be numeric", null));
+            }
             return OAuth2TokenValidatorResult.success();
         };
     }

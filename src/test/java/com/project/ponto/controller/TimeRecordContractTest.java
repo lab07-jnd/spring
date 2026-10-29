@@ -48,7 +48,7 @@ class TimeRecordContractTest {
      * the JWT principal). It exercises the full security pipeline:
      * BearerTokenAuthenticationFilter → JwtDecoder → JwtAuthenticationConverter.
      */
-    private static final String VALID_TOKEN = JwtTestUtils.validToken("test-user");
+    private static final String VALID_TOKEN = JwtTestUtils.validToken("1");
 
     @Autowired
     private MockMvc mockMvc;
