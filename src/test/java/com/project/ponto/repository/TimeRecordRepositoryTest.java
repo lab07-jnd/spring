@@ -74,6 +74,8 @@ class TimeRecordRepositoryTest {
         record.setJustification(justification);
         record.setDateTime(LocalDateTime.of(2026, 10, 10, 12, 0));
         record.setType(TimeRecordTypeEnum.LUNCH_OUT);
+        // Only the first clock-in of the day gets late minutes in practice; a non-zero value tests the projection
+        record.setLateMinutes(17);
         record.setOrigin(TimeRecordOriginEnum.APP);
         record.setNotes("Saída para almoço");
         record.setGeolocation(new Geolocation(-23.55, -46.63));
@@ -92,6 +94,7 @@ class TimeRecordRepositoryTest {
                 contract.getId(),
                 LocalDateTime.of(2026, 10, 10, 12, 0),
                 TimeRecordTypeEnum.LUNCH_OUT,
+                17,
                 TimeRecordOriginEnum.APP,
                 -23.55,
                 -46.63,

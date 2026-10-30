@@ -33,6 +33,9 @@ public class TimeRecord {
     @Embedded
     private Geolocation geolocation;
 
+    // Gravado em vez de calculado na leitura, para o histórico não mudar se a jornada mudar depois
+    private int lateMinutes;
+
     private LocalDateTime createdAt;
 
     @ManyToOne

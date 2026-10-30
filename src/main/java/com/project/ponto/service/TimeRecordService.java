@@ -65,7 +65,8 @@ public class TimeRecordService {
                 });
 
         validateDebounce(contract.getId(), now);
-        validateDailySequence(contract.getId(), request.type(), now);
+        Optional<TimeRecord> lastRecordOfDay = findLastRecordOfDay(contract.getId(), now);
+        validateDailySequence(lastRecordOfDay, request.type());
 
         Geolocation geolocation = Geolocation.of(request.latitude(), request.longitude());
 
@@ -76,6 +77,11 @@ public class TimeRecordService {
         record.setOrigin(request.origin());
         record.setNotes(request.notes());
         record.setGeolocation(geolocation);
+        // Só a primeira marcação do dia (sempre CLOCK_IN) conta atraso: um novo CLOCK_IN
+        // depois de um CLOCK_OUT no mesmo dia fica com 0
+        if (lastRecordOfDay.isEmpty()) {
+            record.setLateMinutes(contract.getWorkSchedule().lateMinutesAt(now));
+        }
 
         TimeRecord saved = timeRecordRepository.save(record);
         return TimeRecordResponse.from(saved);
@@ -117,16 +123,17 @@ public class TimeRecordService {
                 });
     }
 
-    private void validateDailySequence(Long contractId, TimeRecordTypeEnum requestedType, LocalDateTime now) {
+    private Optional<TimeRecord> findLastRecordOfDay(Long contractId, LocalDateTime now) {
         LocalDate today = now.toLocalDate();
 
-        Optional<TimeRecord> lastRecordOpt = timeRecordRepository
-                .findTopByContractIdAndDateTimeBetweenOrderByDateTimeDesc(
-                        contractId,
-                        today.atStartOfDay(),
-                        today.atTime(LocalTime.MAX)
-                );
+        return timeRecordRepository.findTopByContractIdAndDateTimeBetweenOrderByDateTimeDesc(
+                contractId,
+                today.atStartOfDay(),
+                today.atTime(LocalTime.MAX)
+        );
+    }
 
+    private void validateDailySequence(Optional<TimeRecord> lastRecordOpt, TimeRecordTypeEnum requestedType) {
         if (lastRecordOpt.isEmpty()) {
             if (!requestedType.canStartDay()) {
                 throw new ConflictException(
