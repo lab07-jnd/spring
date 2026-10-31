@@ -87,7 +87,7 @@ class TimeRecordControllerTest {
 
         mockMvc.perform(get("/funcionarios/99/pontos"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.erro").value("Funcionário não encontrado com id: 99"));
+                .andExpect(jsonPath("$.message").value("Funcionário não encontrado com id: 99"));
     }
 
     @Test
@@ -100,7 +100,7 @@ class TimeRecordControllerTest {
                         .param("dataInicio", "2026-10-11")
                         .param("dataFim", "2026-10-10"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.erro").value("dataInicio não pode ser posterior a dataFim"));
+                .andExpect(jsonPath("$.message").value("dataInicio não pode ser posterior a dataFim"));
     }
 
     // 10/1/26 is the short date style of the request locale (MockMvc defaults to English):
@@ -115,6 +115,6 @@ class TimeRecordControllerTest {
     void mustAnswerBadRequestForWrongType(String url, String parameter) throws Exception {
         mockMvc.perform(get(url))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.erro").value("Valor inválido para o parâmetro '" + parameter + "'"));
+                .andExpect(jsonPath("$.message").value("Valor inválido para o parâmetro '" + parameter + "'"));
     }
 }
