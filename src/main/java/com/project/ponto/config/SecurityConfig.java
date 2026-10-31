@@ -1,15 +1,19 @@
 package com.project.ponto.config;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.List;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.project.ponto.exception.ErrorResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,16 +29,21 @@ import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
+import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.util.Assert;
-
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     public static final String USER_ID_CLAIM = "id";
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,6 +55,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .authenticationEntryPoint(unauthorizedEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler())
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())));
         return http.build();
     }
@@ -65,7 +75,6 @@ public class SecurityConfig {
                 userIdValidator()));
         return decoder;
     }
-
 
     private JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
@@ -88,10 +97,38 @@ public class SecurityConfig {
     private AuthenticationEntryPoint unauthorizedEntryPoint() {
         BearerTokenAuthenticationEntryPoint bearerEntryPoint = new BearerTokenAuthenticationEntryPoint();
         return (request, response, authException) -> {
-            bearerEntryPoint.commence(request, response, authException); // status 401 + WWW-Authenticate
+            bearerEntryPoint.commence(request, response, authException); // status 401 + WWW-Authenticate header
+            HttpStatus status = HttpStatus.UNAUTHORIZED;
+            ErrorResponse errorResponse = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    status.getReasonPhrase(),
+                    "Token ausente, inválido ou expirado.",
+                    request.getRequestURI()
+            );
+
             response.setContentType(MediaType.APPLICATION_JSON_VALUE);
             response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-            response.getWriter().write("{\"error\":\"Token missing, invalid, or expired\"}");
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
+    }
+
+    private AccessDeniedHandler accessDeniedHandler() {
+        BearerTokenAccessDeniedHandler bearerDeniedHandler = new BearerTokenAccessDeniedHandler();
+        return (request, response, accessDeniedException) -> {
+            bearerDeniedHandler.handle(request, response, accessDeniedException); // status 403 + WWW-Authenticate header
+            HttpStatus status = HttpStatus.FORBIDDEN;
+            ErrorResponse errorResponse = new ErrorResponse(
+                    Instant.now(),
+                    status.value(),
+                    status.getReasonPhrase(),
+                    "Acesso negado: você não possui permissão para acessar este recurso.",
+                    request.getRequestURI()
+            );
+
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         };
     }
 }

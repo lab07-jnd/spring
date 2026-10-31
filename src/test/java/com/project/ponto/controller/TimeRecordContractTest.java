@@ -337,7 +337,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Latitude must be greater than or equal to -90.0")));
+                    .andExpect(jsonPath("$.message", containsString("Latitude must be greater than or equal to -90.0")));
         }
 
         @Test
@@ -357,7 +357,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Latitude must be less than or equal to 90.0")));
+                    .andExpect(jsonPath("$.message", containsString("Latitude must be less than or equal to 90.0")));
         }
 
         @Test
@@ -377,7 +377,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Longitude must be greater than or equal to -180.0")));
+                    .andExpect(jsonPath("$.message", containsString("Longitude must be greater than or equal to -180.0")));
         }
 
         @Test
@@ -397,7 +397,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Longitude must be less than or equal to 180.0")));
+                    .andExpect(jsonPath("$.message", containsString("Longitude must be less than or equal to 180.0")));
         }
 
         @Test
@@ -418,7 +418,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("The notes field exceeds the limit of 255 characters")));
+                    .andExpect(jsonPath("$.message", containsString("The notes field exceeds the limit of 255 characters")));
         }
 
         @Test
@@ -438,7 +438,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Employee ID must be provided")));
+                    .andExpect(jsonPath("$.message", containsString("Employee ID must be provided")));
         }
 
         @Test
@@ -458,7 +458,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Time record type must be provided")));
+                    .andExpect(jsonPath("$.message", containsString("Time record type must be provided")));
         }
 
         @Test
@@ -486,7 +486,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.erro", containsString("Wait at least 1 minute")));
+                    .andExpect(jsonPath("$.message", containsString("Wait at least 1 minute")));
         }
 
         @Test
@@ -506,7 +506,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.erro", containsString("The first clock-in of the day must be of type CLOCK_IN")));
+                    .andExpect(jsonPath("$.message", containsString("The first clock-in of the day must be of type CLOCK_IN")));
         }
 
         @Test
@@ -526,7 +526,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isNotFound())
-                    .andExpect(jsonPath("$.erro", containsString("Employee not found")));
+                    .andExpect(jsonPath("$.message", containsString("Employee not found")));
         }
     }
 
@@ -616,7 +616,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Both latitude and longitude must be provided together")));
+                    .andExpect(jsonPath("$.message", containsString("Both latitude and longitude must be provided together")));
         }
 
         @Test
@@ -636,7 +636,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.erro", containsString("Both latitude and longitude must be provided together")));
+                    .andExpect(jsonPath("$.message", containsString("Both latitude and longitude must be provided together")));
         }
 
         @Test
@@ -679,7 +679,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.erro", containsString("Employee is not active. Current status: VACATION")));
+                    .andExpect(jsonPath("$.message", containsString("Employee is not active. Current status: VACATION")));
         }
 
         @Test
@@ -706,7 +706,7 @@ class TimeRecordContractTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isConflict())
-                    .andExpect(jsonPath("$.erro", containsString("After CLOCK_IN, the next clock-in must be one of")));
+                    .andExpect(jsonPath("$.message", containsString("After CLOCK_IN, the next clock-in must be one of")));
         }
     }
 }

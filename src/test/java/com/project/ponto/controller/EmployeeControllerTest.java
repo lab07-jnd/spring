@@ -30,6 +30,6 @@ class EmployeeControllerTest {
     void mustAnswerBadRequestForNonNumericPage() throws Exception {
         mockMvc.perform(get("/funcionarios").param("page", "x"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.erro").value("Valor inválido para o parâmetro 'page'"));
+                .andExpect(jsonPath("$.message").value("Valor inválido para o parâmetro 'page'"));
     }
 }
